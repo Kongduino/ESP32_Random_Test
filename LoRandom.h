@@ -23,10 +23,21 @@ void writeRegister(uint8_t reg, uint8_t value);
 uint8_t readRegister(uint8_t reg);
 // Provide your own functions, which will depend on your library
 
+uint8_t modemconf1;
+uint8_t modemconf2;
+
 void setupLoRandom() {
+  modemconf1 = readRegister(RegModemConfig1);
+  modemconf2 = readRegister(RegModemConfig2);
   writeRegister(RegOpMode, 0b10001101);
   writeRegister(RegModemConfig1, 0b01110010);
   writeRegister(RegModemConfig2, 0b01110000);
+}
+
+void resetLoRa() {
+  writeRegister(RegOpMode, 0b10000001); // MODE_LONG_RANGE_MODE 0x80 || MODE_STDBY 0x01
+  writeRegister(RegModemConfig1, modemconf1);
+  writeRegister(RegModemConfig2, modemconf2);
 }
 
 uint8_t getLoRandomByte() {
@@ -40,24 +51,18 @@ uint8_t getLoRandomByte() {
 }
 
 void fillRandom(unsigned char *x, size_t len) {
-  uint8_t modemconf1 = readRegister(RegModemConfig1);
-  uint8_t modemconf2 = readRegister(RegModemConfig2);
   setupLoRandom();
   size_t i;
   for (i = 0; i < len; i++) {
     x[i] = getLoRandomByte();
   }
-  writeRegister(RegOpMode, 0b10000001); // MODE_LONG_RANGE_MODE 0x80 || MODE_STDBY 0x01
-  writeRegister(RegModemConfig1, modemconf1);
-  writeRegister(RegModemConfig2, modemconf2);
+  resetLoRa();
 }
 
 void fillRandom(unsigned char *x, size_t len, uint8_t except) {
   // used, for instance, when you want a non-zero value.
   // fillRandom(UUID, 16, 0);
   // get a UUID with 16 bytes, all non-zero
-  uint8_t modemconf1 = readRegister(RegModemConfig1);
-  uint8_t modemconf2 = readRegister(RegModemConfig2);
   setupLoRandom();
   size_t i;
   for (i = 0; i < len; i++) {
@@ -65,17 +70,13 @@ void fillRandom(unsigned char *x, size_t len, uint8_t except) {
     while (c == except)c = getLoRandomByte();
     x[i] = c;
   }
-  writeRegister(RegOpMode, 0b10000001); // MODE_LONG_RANGE_MODE 0x80 || MODE_STDBY 0x01
-  writeRegister(RegModemConfig1, modemconf1);
-  writeRegister(RegModemConfig2, modemconf2);
+  resetLoRa();
 }
 
 void fillRandom(unsigned char *x, size_t len, uint8_t minValue, uint8_t maxValue) {
   // used, for instance, when you want a value within a specified range.
   // fillRandom(x, 16, 0, 15);
   // get a bank of random numbers, between 0 and 15.
-  uint8_t modemconf1 = readRegister(RegModemConfig1);
-  uint8_t modemconf2 = readRegister(RegModemConfig2);
   setupLoRandom();
   size_t i;
   for (i = 0; i < len; i++) {
@@ -83,7 +84,5 @@ void fillRandom(unsigned char *x, size_t len, uint8_t minValue, uint8_t maxValue
     while (c < minValue || c > maxValue)c = getLoRandomByte();
     x[i] = c;
   }
-  writeRegister(RegOpMode, 0b10000001); // MODE_LONG_RANGE_MODE 0x80 || MODE_STDBY 0x01
-  writeRegister(RegModemConfig1, modemconf1);
-  writeRegister(RegModemConfig2, modemconf2);
+  resetLoRa();
 }
