@@ -1,5 +1,5 @@
 #include <LoRa.h>
-#include "LoRandom.h"
+#include <LoRandom.h>
 
 #define SS      18
 #define RST     14
@@ -28,30 +28,6 @@ void writeRegister(uint8_t reg, uint8_t value) {
 
 uint8_t readRegister(uint8_t reg) {
   return LoRa.readRegister(reg);
-}
-
-void hexDump(unsigned char *buf, uint16_t len) {
-  String s = "|", t = "| |";
-  Serial.println(F("  |.0 .1 .2 .3 .4 .5 .6 .7 .8 .9 .a .b .c .d .e .f |"));
-  Serial.println(F("  +------------------------------------------------+ +----------------+"));
-  for (uint16_t i = 0; i < len; i += 16) {
-    for (uint8_t j = 0; j < 16; j++) {
-      if (i + j >= len) {
-        s = s + "   "; t = t + " ";
-      } else {
-        char c = buf[i + j];
-        if (c < 16) s = s + "0";
-        s = s + String(c, HEX) + " ";
-        if (c < 32 || c > 127) t = t + ".";
-        else t = t + (String(c));
-      }
-    }
-    uint8_t index = i / 16;
-    Serial.print(index, HEX); Serial.write('.');
-    Serial.println(s + t + "|");
-    s = "|"; t = "| |";
-  }
-  Serial.println(F("  +------------------------------------------------+ +----------------+"));
 }
 
 unsigned char pkt[256];
@@ -89,29 +65,29 @@ void setup() {
   uint8_t reglna = 0b00100011;
 
   Serial.print("\nSetting up LoRa for Transmission ");
-  LoRa.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
+  writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
   delay(10);
-  LoRa.writeRegister(REG_PA_CONFIG, 0xFF);
-  LoRa.writeRegister(REG_MODEM_CONFIG_1, reg1);
-  LoRa.writeRegister(REG_MODEM_CONFIG_2, reg2);
-  LoRa.writeRegister(REG_MODEM_CONFIG_3, reg3);
-  LoRa.writeRegister(REG_LNA, reglna);
-  LoRa.writeRegister(REG_PA_DAC, REG_PA_DAC); // That's for the receiver
-  LoRa.writeRegister(REG_OCP, 0b00111111);
+  writeRegister(REG_PA_CONFIG, 0xFF);
+  writeRegister(REG_MODEM_CONFIG_1, reg1);
+  writeRegister(REG_MODEM_CONFIG_2, reg2);
+  writeRegister(REG_MODEM_CONFIG_3, reg3);
+  writeRegister(REG_LNA, reglna);
+  writeRegister(REG_PA_DAC, REG_PA_DAC); // That's for the receiver
+  writeRegister(REG_OCP, 0b00111111);
   delay(10);
-  LoRa.writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+  writeRegister(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
   delay(10);
   Serial.println("LoRa [" + String(BAND / 1E6) + "]");
 
-  uint8_t x = LoRa.readRegister(0x01);
+  uint8_t x = readRegister(0x01);
   Serial.print("RegOpMode: 0x");
   if (x < 16) Serial.write('0');
   Serial.println(x, HEX);
-  x = LoRa.readRegister(0x1D);
+  x = readRegister(0x1D);
   Serial.print("RegModemConfig1: 0x");
   if (x < 16) Serial.write('0');
   Serial.println(x, HEX);
-  x = LoRa.readRegister(0x1E);
+  x = readRegister(0x1E);
   Serial.print("RegModemConfig2: 0x");
   if (x < 16) Serial.write('0');
   Serial.println(x, HEX);
