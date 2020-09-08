@@ -4,7 +4,7 @@ A sample sketch demonstrating the problem in Sandeep Mistry's excellent LoRa lib
 
 This was written for ESP32, but is easily adaptable to other platforms. The code runs on TTGO series. A T-Beam in this case, but it'll work as is with basically any LoRa-equipped TTGO or Heltec ESP32 device.
 
-This version moves LoRandom to a library on its own. I can now update one file and reuse in all my projects...
+This version moves LoRandom to a [library on its own](https://github.com/Kongduino/LoRandom). I can now update one file and reuse in all my projects...
 
 See:
 
