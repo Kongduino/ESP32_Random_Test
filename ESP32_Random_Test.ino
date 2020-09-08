@@ -22,10 +22,16 @@
 #define MODE_RX_CONTINUOUS 0x05
 #define MODE_RX_SINGLE 0x06
 
+/*
+  Note: I have "customized the LoRa library by moving
+  uint8_t readRegister(uint8_t address);
+  void writeRegister(uint8_t address, uint8_t value);
+  to public: in LoRa.h – as we need access to the registers, obviously.
+*/
+
 void writeRegister(uint8_t reg, uint8_t value) {
   LoRa.writeRegister(reg, value);
 }
-
 uint8_t readRegister(uint8_t reg) {
   return LoRa.readRegister(reg);
 }
