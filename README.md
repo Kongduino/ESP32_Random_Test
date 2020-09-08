@@ -6,6 +6,13 @@ This was written for ESP32, but is easily adaptable to other platforms. The code
 
 This version moves LoRandom to a [library on its own](https://github.com/Kongduino/LoRandom). I can now update one file and reuse in all my projects...
 
+Note: I have "customized the LoRa library by moving
+```c
+  uint8_t readRegister(uint8_t address);
+  void writeRegister(uint8_t address, uint8_t value);
+```
+to `public:` in LoRa.h – as we need access to the registers, obviously.
+
 See:
 
 ![Generating Random Numbers with LoRandom](LoRandom.png)
